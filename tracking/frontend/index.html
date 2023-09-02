@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Delivery Tracking</title>
+  <style>
+    /* Styles for UI */
+  </style>
+</head>
+<body>
+  <h1>Delivery Tracking</h1>
+  <div>
+    <label for="statusInput">Status:</label>
+    <input type="text" id="statusInput">
+    <label for="locationInput">Location:</label>
+    <input type="text" id="locationInput">
+    <button onclick="createDelivery()">Create Delivery</button>
+  </div>
+  <div id="deliveryStatus"></div>
+
+  <script>
+    function createDelivery() {
+      const status = document.getElementById('statusInput').value;
+      const location = document.getElementById('locationInput').value;
+
+      fetch('/create_delivery.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status, location })
+      })
+        .then(response => response.json())
+        .then(data => {
+          const deliveryStatusDiv = document.getElementById('deliveryStatus');
+          if (data.trackingNumber) {
+            deliveryStatusDiv.innerHTML = `
+              <h3>Delivery created successfully</h3>
+              <p>Tracking Number: ${data.trackingNumber}</p>
+            `;
+          } else {
+            deliveryStatusDiv.innerHTML = `
+              <p>Error: ${data.message}</p>
+            `;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
+</body>
+</html>
